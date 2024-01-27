@@ -26,7 +26,7 @@ public class Topic {
 
     @ManyToOne
     @JoinColumn(name = "author_id")
-    private User author;
+    private UserEntity author;
 
     @Column(name = "created_at")
     @CreationTimestamp
