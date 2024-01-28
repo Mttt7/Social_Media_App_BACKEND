@@ -20,6 +20,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -30,27 +32,25 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+        http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(req->
-                req.requestMatchers("/api/v1/auth/**").permitAll()
+                req
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
 
-        http.sessionManagement(Customizer.withDefaults()); //deprecated: http.sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
 
         http.exceptionHandling((
                 httpSecurityExceptionHandlingConfigurer ->
                         httpSecurityExceptionHandlingConfigurer
                         .authenticationEntryPoint(authEntryPoint)
                 )
-
         );
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-
-
-
-        http.csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
 

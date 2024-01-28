@@ -16,7 +16,6 @@ import static com.mt.mtSocialMedia.config.security.SecurityConstants.JWT_SECRET;
 
 @Component
 public class JWTGenerator {
-
     public String generateToken(Authentication authentication){
         String username = authentication.getName();
         Date currentDate = new Date();
