@@ -1,4 +1,4 @@
-package com.mt.mtSocialMedia.dto;
+package com.mt.mtSocialMedia.dto.Post;
 
 import com.mt.mtSocialMedia.model.Topic;
 import jakarta.persistence.Column;
