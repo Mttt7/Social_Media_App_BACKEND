@@ -1,6 +1,8 @@
 package com.mt.mtSocialMedia.service.serviceImpl;
 
-import com.mt.mtSocialMedia.dto.PostDto;
+import com.mt.mtSocialMedia.dto.Post.PostDto;
+import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
+import com.mt.mtSocialMedia.mapper.PostMapper;
 import com.mt.mtSocialMedia.model.Post;
 import com.mt.mtSocialMedia.model.Topic;
 import com.mt.mtSocialMedia.model.UserEntity;
@@ -19,6 +21,7 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final TopicRepository topicRepository;
     private final PostRepository postRepository;
+    private final PostMapper postMapper;
     @Override
     public String createPost(PostDto postDto) {
         Post post = new Post();
@@ -35,6 +38,12 @@ public class PostServiceImpl implements PostService {
         post.setUserEntity(user);
         postRepository.save(post);
 
-        return "Post created";
+        return "Post created!";
+    }
+
+    @Override
+    public PostResponseDto getPostById(Long id) throws Exception {
+        Post post = postRepository.findById(id).orElseThrow(()-> new Exception("Post Not Found"));
+        return postMapper.mapToPostResponseDto(post);
     }
 }
