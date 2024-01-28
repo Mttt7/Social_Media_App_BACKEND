@@ -1,5 +1,7 @@
 package com.mt.mtSocialMedia.controller;
 
+import com.mt.mtSocialMedia.config.security.JWTGenerator;
+import com.mt.mtSocialMedia.dto.AuthResponseDTO;
 import com.mt.mtSocialMedia.dto.LoginDto;
 import com.mt.mtSocialMedia.dto.RegisterDto;
 import com.mt.mtSocialMedia.model.Role;
@@ -33,15 +35,17 @@ public class AuthController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JWTGenerator jwtGenerator;
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDto loginDto){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginDto.getUsername(),loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>("User signed success!",HttpStatus.OK);
+        String token = jwtGenerator.generateToken(authentication);
+        return new ResponseEntity<>(new AuthResponseDTO(token),HttpStatus.OK);
     }
 
 
