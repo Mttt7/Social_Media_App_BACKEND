@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PostMapper {
-    public PostResponseDto mapToPostResponseDto(Post post){
+    public static PostResponseDto mapToPostResponseDto(Post post){
         return PostResponseDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())

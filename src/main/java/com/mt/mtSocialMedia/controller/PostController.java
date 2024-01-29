@@ -4,6 +4,7 @@ import com.mt.mtSocialMedia.dto.Post.PostDto;
 import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
 import com.mt.mtSocialMedia.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,10 +22,19 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<String> createPost(@RequestBody  PostDto postDto){
         String res = postService.createPost(postDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(res);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<Page<PostResponseDto>>
+    getPostsByUserIdPaginate(@RequestParam Long id,
+                             @RequestParam int pageSize,
+                             @RequestParam int pageNumber){
+       Page<PostResponseDto> res = postService.getPostsByUserIdPaginate(id,pageSize,pageNumber);
+       return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 }
