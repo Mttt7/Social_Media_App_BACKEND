@@ -71,6 +71,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public String deletePostById(Long id) {
+        Post post = postRepository.findById(id).orElse(null);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if(Objects.equals(post.getUserEntity().getUsername(), username)){
+            postRepository.delete(post);
+            return "Post removed id-"+id;
+        }else{
+            return null;
+        }
+    }
+
+    @Override
     public PostResponseDto getPostById(Long id) throws Exception {
         Post post = postRepository.findById(id).orElseThrow(()-> new Exception("Post Not Found"));
         return PostMapper.mapToPostResponseDto(post);

@@ -12,4 +12,6 @@ public interface PostService {
     Page<PostResponseDto> getPostsByUserIdPaginate(Long id,int pageSize, int pageNumber);
 
     PostResponseDto updatePostById(Long id, PostDto postDto);
+
+    String deletePostById(Long id);
 }

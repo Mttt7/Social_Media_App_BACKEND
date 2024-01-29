@@ -32,6 +32,16 @@ public class PostController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePostById(@PathVariable Long id){
+        String res = postService.deletePostById(id);
+        if(res==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }else{
+            return ResponseEntity.status(HttpStatus.OK).body(res);
+        }
+    }
+
 
 
     @PostMapping("")
