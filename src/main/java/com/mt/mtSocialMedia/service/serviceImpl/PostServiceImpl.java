@@ -1,5 +1,6 @@
 package com.mt.mtSocialMedia.service.serviceImpl;
 
+import com.mt.mtSocialMedia.config.security.JWTGenerator;
 import com.mt.mtSocialMedia.dto.Post.PostDto;
 import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
 import com.mt.mtSocialMedia.mapper.PostMapper;
@@ -15,9 +16,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +30,7 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final TopicRepository topicRepository;
     private final PostRepository postRepository;
-    private final PostMapper postMapper;
+    //private final PostMapper postMapper;
     @Override
     public String createPost(PostDto postDto) {
         Post post = new Post();
@@ -48,14 +51,34 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public PostResponseDto updatePostById(Long id, PostDto postDto) {
+        Post post = postRepository.findById(id).orElse(null);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if(Objects.equals(post.getUserEntity().getUsername(), username)){
+           if(postDto.getTitle() != null) post.setTitle(postDto.getTitle());
+           if(postDto.getContent() != null) post.setContent(postDto.getContent());
+           if(postDto.getImageUrl() != null) post.setImageUrl(postDto.getImageUrl());
+           if(postDto.getTopicId() !=null ){
+               post.setTopic(topicRepository.findById(postDto.getTopicId()).orElse(null));
+           }
+
+           postRepository.save(post);
+           return PostMapper.mapToPostResponseDto(post);
+        }else{
+            return null;
+        }
+    }
+
+    @Override
     public PostResponseDto getPostById(Long id) throws Exception {
         Post post = postRepository.findById(id).orElseThrow(()-> new Exception("Post Not Found"));
-        return postMapper.mapToPostResponseDto(post);
+        return PostMapper.mapToPostResponseDto(post);
     }
 
     @Override
     public Page<PostResponseDto> getPostsByUserIdPaginate(Long id, int pageSize, int pageNumber) {
-        Page<Post> postsPage = postRepository.findAll(PageRequest.of(pageNumber,
+        Page<Post> postsPage = postRepository.findAllByUserEntity_Id(id,PageRequest.of(pageNumber,
                 pageSize,
                 Sort.by("createdAt").descending()));
 

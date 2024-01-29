@@ -22,6 +22,18 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<PostResponseDto> updatePostById(@PathVariable Long id, @RequestBody PostDto postDto){
+        PostResponseDto updatedPost = postService.updatePostById(id,postDto);
+        if(updatedPost==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }else{
+            return ResponseEntity.status(HttpStatus.OK).body(updatedPost);
+        }
+    }
+
+
+
     @PostMapping("")
     public ResponseEntity<String> createPost(@RequestBody  PostDto postDto){
         String res = postService.createPost(postDto);
