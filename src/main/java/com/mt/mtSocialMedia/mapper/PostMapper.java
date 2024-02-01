@@ -1,14 +1,25 @@
 package com.mt.mtSocialMedia.mapper;
 
+import com.mt.mtSocialMedia.dto.Post.PostReactionResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
 import com.mt.mtSocialMedia.model.Post;
+import com.mt.mtSocialMedia.model.PostReaction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class PostMapper {
     public static PostResponseDto mapToPostResponseDto(Post post){
+        List<PostReactionResponseDto> reactions = new ArrayList<>();
+        for (PostReaction pr:
+             post.getReactions()) {
+            reactions.add(PostReactionMapper.mapToPostReactionResponse(pr));
+        }
+
         return PostResponseDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -16,6 +27,7 @@ public class PostMapper {
                 .createdAt(post.getCreatedAt())
                 .lastUpdated(post.getLastUpdated())
                 .reactionCount(post.getReactionCount()==null ? 0 : post.getReactionCount())
+                .reactions(reactions)
                 .imageUrl(post.getImageUrl())
                 .topic(post.getTopic())
                 .userId(post.getUserEntity().getId())

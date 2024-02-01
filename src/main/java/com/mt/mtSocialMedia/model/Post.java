@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Data
@@ -44,6 +45,9 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "post")
+    List<PostReaction> reactions; //delete?
 
 
 }

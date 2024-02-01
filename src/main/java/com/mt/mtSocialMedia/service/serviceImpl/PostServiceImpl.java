@@ -2,11 +2,15 @@ package com.mt.mtSocialMedia.service.serviceImpl;
 
 import com.mt.mtSocialMedia.config.security.JWTGenerator;
 import com.mt.mtSocialMedia.dto.Post.PostDto;
+import com.mt.mtSocialMedia.dto.Post.PostReactionCountResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
+import com.mt.mtSocialMedia.enums.Reaction;
 import com.mt.mtSocialMedia.mapper.PostMapper;
 import com.mt.mtSocialMedia.model.Post;
+import com.mt.mtSocialMedia.model.PostReaction;
 import com.mt.mtSocialMedia.model.Topic;
 import com.mt.mtSocialMedia.model.UserEntity;
+import com.mt.mtSocialMedia.repository.PostReactionRepository;
 import com.mt.mtSocialMedia.repository.PostRepository;
 import com.mt.mtSocialMedia.repository.TopicRepository;
 import com.mt.mtSocialMedia.repository.UserRepository;
@@ -30,7 +34,7 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final TopicRepository topicRepository;
     private final PostRepository postRepository;
-    //private final PostMapper postMapper;
+    private final PostReactionRepository postReactionRepository;
     @Override
     public String createPost(PostDto postDto) {
         Post post = new Post();
@@ -81,6 +85,65 @@ public class PostServiceImpl implements PostService {
         }else{
             return null;
         }
+    }
+
+    @Override
+    public PostReactionCountResponseDto reactToPost(Long id, int reactionType) throws Exception {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByUsername(username).orElse(null);
+
+        Post post = postRepository.findById(id).orElse(null);
+
+        if(post==null){
+            throw new Exception("Post nie istnieje");
+        }
+
+
+        Reaction reaction = switch (reactionType) {
+            case 0 -> Reaction.LIKE;
+            case 1 -> Reaction.LOVE;
+            case 2 -> Reaction.HAHA;
+            case 3 -> Reaction.SAD;
+            case 4 -> Reaction.ANGRY;
+            default -> throw new IllegalArgumentException("Nieprawidłowa liczba: " + reactionType);
+        };
+
+        if(postReactionRepository.existsByAuthorAndPost(user,post)){
+            PostReaction dbReaction = postReactionRepository.findByAuthorAndPost(user,post);
+            if(dbReaction.getReactionType() == reaction){
+                post.setReactionCount(post.getReactionCount()-1);
+                postReactionRepository.delete(dbReaction);
+                postRepository.save(post);
+            }else{
+                dbReaction.setReactionType(reaction);
+                postReactionRepository.save(dbReaction);
+            }
+        }else{
+            PostReaction postReaction = PostReaction.builder()
+                    .reactionType(reaction)
+                    .author(user)
+                    .post(post)
+                    .build();
+            if(post.getReactionCount()==null) post.setReactionCount(0L);
+            post.setReactionCount(post.getReactionCount()+1);
+            postReactionRepository.save(postReaction);
+            postRepository.save(post);
+        }
+
+        return this.getReactionsCount(id);
+    }
+
+    @Override
+    public PostReactionCountResponseDto getReactionsCount(Long postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        return PostReactionCountResponseDto.builder()
+                        .overall(post.getReactionCount()==null ? 0L : post.getReactionCount())
+                        .like(postReactionRepository.countByReactionTypeAndPost_Id(Reaction.LIKE,postId))
+                        .love(postReactionRepository.countByReactionTypeAndPost_Id(Reaction.LOVE,postId))
+                        .haha(postReactionRepository.countByReactionTypeAndPost_Id(Reaction.HAHA,postId))
+                        .sad(postReactionRepository.countByReactionTypeAndPost_Id(Reaction.SAD,postId))
+                        .angry( postReactionRepository.countByReactionTypeAndPost_Id(Reaction.ANGRY,postId))
+                .build();
     }
 
     @Override

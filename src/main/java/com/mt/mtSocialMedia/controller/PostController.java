@@ -1,13 +1,19 @@
 package com.mt.mtSocialMedia.controller;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.mt.mtSocialMedia.dto.Post.PostDto;
+import com.mt.mtSocialMedia.dto.Post.PostReactionCountResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
+import com.mt.mtSocialMedia.enums.Reaction;
 import com.mt.mtSocialMedia.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -42,8 +48,6 @@ public class PostController {
         }
     }
 
-
-
     @PostMapping("")
     public ResponseEntity<String> createPost(@RequestBody  PostDto postDto){
         String res = postService.createPost(postDto);
@@ -57,6 +61,19 @@ public class PostController {
                              @RequestParam int pageSize,
                              @RequestParam int pageNumber){
        Page<PostResponseDto> res = postService.getPostsByUserIdPaginate(id,pageSize,pageNumber);
+        System.out.println(res);
        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
+
+    @GetMapping("/{id}/reactions")
+    public ResponseEntity<PostReactionCountResponseDto> getReactionsCount(@PathVariable Long id){
+       return ResponseEntity.status(HttpStatus.OK).body(postService.getReactionsCount(id));
+    }
+
+    @PostMapping("/{id}/{reactionType}")
+    public ResponseEntity<PostReactionCountResponseDto> reactToPost(@PathVariable Long id, @PathVariable int reactionType) throws Exception {
+        PostReactionCountResponseDto res= this.postService.reactToPost(id,reactionType);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
+
 }
