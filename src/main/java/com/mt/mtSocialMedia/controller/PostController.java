@@ -28,6 +28,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
+
     @PatchMapping("/{id}")
     public ResponseEntity<PostResponseDto> updatePostById(@PathVariable Long id, @RequestBody PostDto postDto){
         PostResponseDto updatedPost = postService.updatePostById(id,postDto);
@@ -61,8 +62,14 @@ public class PostController {
                              @RequestParam int pageSize,
                              @RequestParam int pageNumber){
        Page<PostResponseDto> res = postService.getPostsByUserIdPaginate(id,pageSize,pageNumber);
-        System.out.println(res);
        return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
+
+    @GetMapping("/feed")
+    public  ResponseEntity<Page<PostResponseDto>> getFeedPostsPaginate(@RequestParam int pageSize,
+                                                                                       @RequestParam int pageNumber){
+        Page<PostResponseDto> res = postService.getFeedPostsPaginate(pageSize,pageNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
     @GetMapping("/{id}/reactions")

@@ -14,4 +14,6 @@ public interface PostService {
     PostReactionCountResponseDto reactToPost(Long id, int reactionType) throws Exception;
     PostReactionCountResponseDto getReactionsCount(Long id);
 
+    Page<PostResponseDto> getFeedPostsPaginate(int pageSize, int pageNumber);
+
 }

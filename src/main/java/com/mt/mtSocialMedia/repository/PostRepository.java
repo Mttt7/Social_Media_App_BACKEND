@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post,Long> {
 
+    //Page<Post> findAll(PageRequest pg);
     Page<Post> findAllByUserEntity_Id(Long id, PageRequest pg);
 }

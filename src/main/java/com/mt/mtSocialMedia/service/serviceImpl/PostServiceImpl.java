@@ -146,6 +146,8 @@ public class PostServiceImpl implements PostService {
                 .build();
     }
 
+
+
     @Override
     public PostResponseDto getPostById(Long id) throws Exception {
         Post post = postRepository.findById(id).orElseThrow(()-> new Exception("Post Not Found"));
@@ -155,6 +157,22 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<PostResponseDto> getPostsByUserIdPaginate(Long id, int pageSize, int pageNumber) {
         Page<Post> postsPage = postRepository.findAllByUserEntity_Id(id,PageRequest.of(pageNumber,
+                pageSize,
+                Sort.by("createdAt").descending()));
+
+        return new PageImpl<>(
+                postsPage
+                        .stream()
+                        .map(PostMapper::mapToPostResponseDto)
+                        .collect(Collectors.toList()),
+                PageRequest.of(pageNumber,pageSize),
+                postsPage.getTotalElements()
+        );
+    }
+
+    @Override
+    public Page<PostResponseDto> getFeedPostsPaginate(int pageSize, int pageNumber) {
+        Page<Post> postsPage = postRepository.findAll(PageRequest.of(pageNumber,
                 pageSize,
                 Sort.by("createdAt").descending()));
 
