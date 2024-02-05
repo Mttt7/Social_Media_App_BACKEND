@@ -5,6 +5,7 @@ import com.mt.mtSocialMedia.dto.Post.PostDto;
 import com.mt.mtSocialMedia.dto.Post.PostReactionCountResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
 import com.mt.mtSocialMedia.enums.Reaction;
+import com.mt.mtSocialMedia.mapper.StringResponseMapper;
 import com.mt.mtSocialMedia.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import java.util.Map;
 @CrossOrigin("*")
 public class PostController {
     private final PostService postService;
+    private final StringResponseMapper stringResponseMapper;
 
     @GetMapping("/{id}")
     public ResponseEntity<PostResponseDto> getPostById(@PathVariable Long id) throws Exception {
@@ -40,22 +42,20 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePostById(@PathVariable Long id){
+    public ResponseEntity<HashMap<String,String>> deletePostById(@PathVariable Long id){
         String res = postService.deletePostById(id);
         if(res==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }else{
-            return ResponseEntity.status(HttpStatus.OK).body(res);
+            return ResponseEntity.status(HttpStatus.OK).body(StringResponseMapper.mapToMap(res));
         }
     }
 
     @PostMapping("")
     public ResponseEntity<HashMap<String,String>> createPost(@RequestBody  PostDto postDto){
         String res = postService.createPost(postDto);
-        HashMap<String,String> mapRes = new HashMap<>();
-        mapRes.put("message",res);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mapRes);
+                .body(StringResponseMapper.mapToMap(res));
     }
 
     @GetMapping("")
