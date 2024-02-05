@@ -50,10 +50,12 @@ public class PostController {
     }
 
     @PostMapping("")
-    public ResponseEntity<String> createPost(@RequestBody  PostDto postDto){
+    public ResponseEntity<HashMap<String,String>> createPost(@RequestBody  PostDto postDto){
         String res = postService.createPost(postDto);
+        HashMap<String,String> mapRes = new HashMap<>();
+        mapRes.put("message",res);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(res);
+                .body(mapRes);
     }
 
     @GetMapping("")
