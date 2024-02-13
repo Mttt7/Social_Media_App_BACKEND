@@ -1,5 +1,6 @@
 package com.mt.mtSocialMedia.controller;
 
+import com.mt.mtSocialMedia.dto.User.UserRequestDto;
 import com.mt.mtSocialMedia.dto.User.UserResponseDto;
 import com.mt.mtSocialMedia.model.UserEntity;
 import com.mt.mtSocialMedia.service.UserService;
@@ -27,6 +28,11 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponseDto> getUserProfile(@PathVariable Long userId){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserProfileById(userId));
+    }
+
+    @PatchMapping("")
+    public ResponseEntity<UserResponseDto> editUserProfile(@RequestBody UserRequestDto userRequestDto){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.editUserProfile(userRequestDto));
     }
 
     // -- Frienship --

@@ -16,4 +16,5 @@ public interface PostService {
 
     Page<PostResponseDto> getFeedPostsPaginate(int pageSize, int pageNumber);
 
+    Page<PostResponseDto> getFriendsPostsPaginate(int pageSize, int pageNumber);
 }

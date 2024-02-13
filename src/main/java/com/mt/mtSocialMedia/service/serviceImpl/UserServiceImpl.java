@@ -1,5 +1,6 @@
 package com.mt.mtSocialMedia.service.serviceImpl;
 
+import com.mt.mtSocialMedia.dto.User.UserRequestDto;
 import com.mt.mtSocialMedia.dto.User.UserResponseDto;
 import com.mt.mtSocialMedia.mapper.StringResponseMapper;
 import com.mt.mtSocialMedia.mapper.UserMapper;
@@ -100,6 +101,24 @@ public class UserServiceImpl implements UserService {
                 return StringResponseMapper.mapToMap("STRANGER");
             }
         }
+    }
+
+    @Override
+    public UserResponseDto editUserProfile(UserRequestDto userRequestDto) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByUsername(username).orElse(null);
+
+        if(userRequestDto.getFirstName() != null) user.setFirstName(userRequestDto.getFirstName());
+        if(userRequestDto.getLastName() != null)user.setLastName(userRequestDto.getLastName());
+        if(userRequestDto.getEmail() != null) user.setEmail(userRequestDto.getEmail());
+        if(userRequestDto.getPhone() != null) user.setEmail(userRequestDto.getPhone());
+        if(userRequestDto.getPhotoUrl() != null) user.setPhotoUrl(userRequestDto.getPhotoUrl());
+        if(userRequestDto.getBackgroundUrl() != null) user.setBackgroundUrl(userRequestDto.getBackgroundUrl());
+        if(userRequestDto.getAbout() != null) user.setAbout(userRequestDto.getAbout());
+
+        userRepository.save(user);
+
+        return UserMapper.mapToUserResponseDto(user);
     }
 
 

@@ -73,6 +73,12 @@ public class PostController {
         Page<PostResponseDto> res = postService.getFeedPostsPaginate(pageSize,pageNumber);
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
+    @GetMapping("/friends")
+    public  ResponseEntity<Page<PostResponseDto>> getFriendsPostsPaginate(@RequestParam int pageSize,
+                                                                       @RequestParam int pageNumber){
+        Page<PostResponseDto> res = postService.getFriendsPostsPaginate(pageSize,pageNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
 
     @GetMapping("/{id}/reactions")
     public ResponseEntity<PostReactionCountResponseDto> getReactionsCount(@PathVariable Long id){

@@ -1,5 +1,6 @@
 package com.mt.mtSocialMedia.service;
 
+import com.mt.mtSocialMedia.dto.User.UserRequestDto;
 import com.mt.mtSocialMedia.dto.User.UserResponseDto;
 import com.mt.mtSocialMedia.model.UserEntity;
 import org.springframework.http.ResponseEntity;
@@ -26,4 +27,6 @@ public interface UserService {
     HashMap<String, String> removeFriend(Long friendId);
 
     HashMap<String, String> getStatusWithGivenUser(Long userId);
+
+    UserResponseDto editUserProfile(UserRequestDto userRequestDto);
 }

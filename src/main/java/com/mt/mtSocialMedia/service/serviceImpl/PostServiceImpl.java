@@ -4,6 +4,7 @@ import com.mt.mtSocialMedia.config.security.JWTGenerator;
 import com.mt.mtSocialMedia.dto.Post.PostDto;
 import com.mt.mtSocialMedia.dto.Post.PostReactionCountResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
+import com.mt.mtSocialMedia.dto.User.UserResponseDto;
 import com.mt.mtSocialMedia.enums.Reaction;
 import com.mt.mtSocialMedia.mapper.PostMapper;
 import com.mt.mtSocialMedia.model.Post;
@@ -15,6 +16,7 @@ import com.mt.mtSocialMedia.repository.PostRepository;
 import com.mt.mtSocialMedia.repository.TopicRepository;
 import com.mt.mtSocialMedia.repository.UserRepository;
 import com.mt.mtSocialMedia.service.PostService;
+import com.mt.mtSocialMedia.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,6 +26,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -35,6 +39,8 @@ public class PostServiceImpl implements PostService {
     private final TopicRepository topicRepository;
     private final PostRepository postRepository;
     private final PostReactionRepository postReactionRepository;
+    private final UserService userService;
+
     @Override
     public String createPost(PostDto postDto) {
         Post post = new Post();
@@ -182,6 +188,28 @@ public class PostServiceImpl implements PostService {
                         .map(PostMapper::mapToPostResponseDto)
                         .collect(Collectors.toList()),
                 PageRequest.of(pageNumber,pageSize),
+                postsPage.getTotalElements()
+        );
+    }
+
+    @Override
+    public Page<PostResponseDto> getFriendsPostsPaginate(int pageSize, int pageNumber) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByUsername(username).orElse(null);
+
+        List<Long> friendsIds = userService.getFriendList(user.getId())
+                .stream()
+                .map(UserResponseDto::getId)
+                .collect(Collectors.toList());
+
+        Page<Post> postsPage = postRepository.findAllByUserEntity_IdIn(friendsIds, PageRequest.of(pageNumber, pageSize));
+
+
+        return new PageImpl<>(
+                postsPage.getContent().stream()
+                        .map(PostMapper::mapToPostResponseDto)
+                        .collect(Collectors.toList()),
+                postsPage.getPageable(),
                 postsPage.getTotalElements()
         );
     }
