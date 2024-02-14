@@ -1,7 +1,7 @@
 package com.mt.mtSocialMedia.controller;
 
 import com.mt.mtSocialMedia.config.security.JWTGenerator;
-import com.mt.mtSocialMedia.dto.AuthResponseDTO;
+import com.mt.mtSocialMedia.dto.AuthResponseDto;
 import com.mt.mtSocialMedia.dto.LoginDto;
 import com.mt.mtSocialMedia.dto.RegisterDto;
 import com.mt.mtSocialMedia.model.Role;
@@ -15,12 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.Collections;
 
 @RestController
@@ -37,13 +35,13 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDto loginDto){
+    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginDto.getUsername(),loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtGenerator.generateToken(authentication);
-        return new ResponseEntity<>(new AuthResponseDTO(token),HttpStatus.OK);
+        return new ResponseEntity<>(new AuthResponseDto(token),HttpStatus.OK);
     }
 
 

@@ -47,7 +47,7 @@ public class Post {
     private UserEntity userEntity;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "post")
-    List<PostReaction> reactions; //delete?
+    List<PostReaction> reactions;
 
 
 }

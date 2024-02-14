@@ -3,11 +3,11 @@ package com.mt.mtSocialMedia.dto;
 import lombok.Data;
 
 @Data
-public class AuthResponseDTO {
+public class AuthResponseDto {
     private String accessToken;
     private String tokenType="Bearer ";
 
-    public AuthResponseDTO(String accessToken){
+    public AuthResponseDto(String accessToken){
         this.accessToken = accessToken;
     }
 }
