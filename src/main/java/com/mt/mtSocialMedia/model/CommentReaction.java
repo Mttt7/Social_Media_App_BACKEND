@@ -2,10 +2,16 @@ package com.mt.mtSocialMedia.model;
 
 import com.mt.mtSocialMedia.enums.Reaction;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 @Table(name = "comment_reaction")
 public class CommentReaction {
     @Id

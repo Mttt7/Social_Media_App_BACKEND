@@ -1,9 +1,15 @@
 package com.mt.mtSocialMedia.service.serviceImpl;
 
+import com.mt.mtSocialMedia.dto.Comment.CommentReactionCountResponseDto;
 import com.mt.mtSocialMedia.dto.Comment.CommentResponseDto;
+import com.mt.mtSocialMedia.dto.Post.PostReactionCountResponseDto;
+import com.mt.mtSocialMedia.enums.Reaction;
 import com.mt.mtSocialMedia.mapper.CommentMapper;
 import com.mt.mtSocialMedia.model.Comment;
+import com.mt.mtSocialMedia.model.CommentReaction;
+import com.mt.mtSocialMedia.model.Post;
 import com.mt.mtSocialMedia.model.UserEntity;
+import com.mt.mtSocialMedia.repository.CommentReactionRepository;
 import com.mt.mtSocialMedia.repository.CommentRepository;
 import com.mt.mtSocialMedia.repository.PostRepository;
 import com.mt.mtSocialMedia.repository.UserRepository;
@@ -24,6 +30,7 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
+    private final CommentReactionRepository commentReactionRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
 
@@ -32,9 +39,9 @@ public class CommentServiceImpl implements CommentService {
         Sort sort = Sort.by("createdAt").descending();
         if(Objects.equals(sortBy, "dateAsc")){
             sort = Sort.by("createdAt").ascending();
-        }else if(sortBy == "reactionAsc"){
+        }else if(Objects.equals(sortBy, "reactionAsc")){
             sort = Sort.by("reactionCount").ascending();
-        } else if (sortBy == "reactionDesc") {
+        } else if (Objects.equals(sortBy, "reactionDesc")) {
             sort = Sort.by("reactionCountAsc").descending();
         }
 
@@ -60,6 +67,68 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
         return "Comment Added";
     }
+
+    @Override
+    public CommentReactionCountResponseDto reactToComment(Long id, int reactionType) throws Exception {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByUsername(username).orElse(null);
+
+        Comment comment = commentRepository.findById(id).orElse(null);
+
+        if(comment==null){
+            throw new Exception("Comment does not exist");
+        }
+
+        Reaction reaction = switch (reactionType) {
+            case 0 -> Reaction.LIKE;
+            case 1 -> Reaction.LOVE;
+            case 2 -> Reaction.HAHA;
+            case 3 -> Reaction.SAD;
+            case 4 -> Reaction.ANGRY;
+            default -> throw new IllegalArgumentException("Wrong number: " + reactionType);
+        };
+
+        if(commentReactionRepository.existsByAuthorAndComment(user,comment)){
+            CommentReaction dbReaction = commentReactionRepository.findByAuthorAndComment(user,comment);
+
+            if(reaction == dbReaction.getReactionType()){
+                comment.setReactionCount(comment.getReactionCount()-1);
+                commentReactionRepository.delete(dbReaction);
+                commentRepository.save(comment);
+            }else{
+                dbReaction.setReactionType(reaction);
+                commentReactionRepository.save(dbReaction);
+            }
+
+        }else{
+            CommentReaction commentReaction = CommentReaction.builder()
+                    .reactionType(reaction)
+                    .author(user)
+                    .comment(comment)
+                    .build();
+            if(comment.getReactionCount()==null) comment.setReactionCount(0L);
+            comment.setReactionCount(comment.getReactionCount()+1);
+
+            commentReactionRepository.save(commentReaction);
+            commentRepository.save(comment);
+        }
+        return this.getReactionsCount(id);
+    }
+
+    @Override
+    public CommentReactionCountResponseDto getReactionsCount(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElse(null);
+        return CommentReactionCountResponseDto.builder()
+                .overall(comment.getReactionCount()==null ? 0L : comment.getReactionCount())
+                .like(commentReactionRepository.countByReactionTypeAndComment_Id(Reaction.LIKE,commentId))
+                .love(commentReactionRepository.countByReactionTypeAndComment_Id(Reaction.LOVE,commentId))
+                .haha(commentReactionRepository.countByReactionTypeAndComment_Id(Reaction.HAHA,commentId))
+                .sad(commentReactionRepository.countByReactionTypeAndComment_Id(Reaction.SAD,commentId))
+                .angry( commentReactionRepository.countByReactionTypeAndComment_Id(Reaction.ANGRY,commentId))
+                .build();
+    }
+
+
 
 }
 

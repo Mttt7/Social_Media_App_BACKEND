@@ -1,6 +1,8 @@
 package com.mt.mtSocialMedia.controller;
 
+import com.mt.mtSocialMedia.dto.Comment.CommentReactionCountResponseDto;
 import com.mt.mtSocialMedia.dto.Comment.CommentResponseDto;
+import com.mt.mtSocialMedia.dto.Post.PostReactionCountResponseDto;
 import com.mt.mtSocialMedia.mapper.StringResponseMapper;
 import com.mt.mtSocialMedia.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +33,16 @@ public class CommentController {
     public ResponseEntity<Map<String,String>> addComment(@PathVariable Long postId,@RequestBody String commentContent){
         String res = commentService.addComment(postId,commentContent);
         return ResponseEntity.status(HttpStatus.OK).body(StringResponseMapper.mapToMap(res));
+    }
+
+    @GetMapping("/{id}/reactions")
+    public ResponseEntity<CommentReactionCountResponseDto> getReactionsCount(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.getReactionsCount(id));
+    }
+
+    @PostMapping("/{id}/{reactionType}")
+    public ResponseEntity<CommentReactionCountResponseDto> reactToComment(@PathVariable Long id, @PathVariable int reactionType) throws Exception {
+        CommentReactionCountResponseDto res = this.commentService.reactToComment(id,reactionType);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 }

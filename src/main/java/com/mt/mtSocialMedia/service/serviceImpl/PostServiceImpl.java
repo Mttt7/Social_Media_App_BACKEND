@@ -101,7 +101,7 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(id).orElse(null);
 
         if(post==null){
-            throw new Exception("Post nie istnieje");
+            throw new Exception("Post does not exist");
         }
 
 
@@ -111,7 +111,7 @@ public class PostServiceImpl implements PostService {
             case 2 -> Reaction.HAHA;
             case 3 -> Reaction.SAD;
             case 4 -> Reaction.ANGRY;
-            default -> throw new IllegalArgumentException("Nieprawidłowa liczba: " + reactionType);
+            default -> throw new IllegalArgumentException("Wrong number: " + reactionType);
         };
 
         if(postReactionRepository.existsByAuthorAndPost(user,post)){
