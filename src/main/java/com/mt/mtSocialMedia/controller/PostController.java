@@ -1,11 +1,13 @@
 package com.mt.mtSocialMedia.controller;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.mt.mtSocialMedia.dto.Comment.CommentResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostDto;
 import com.mt.mtSocialMedia.dto.Post.PostReactionCountResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
 import com.mt.mtSocialMedia.enums.Reaction;
 import com.mt.mtSocialMedia.mapper.StringResponseMapper;
+import com.mt.mtSocialMedia.service.CommentService;
 import com.mt.mtSocialMedia.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,7 @@ import java.util.Map;
 @CrossOrigin("*")
 public class PostController {
     private final PostService postService;
+    private final CommentService commentService;
     private final StringResponseMapper stringResponseMapper;
 
     @GetMapping("/{id}")
@@ -87,7 +90,13 @@ public class PostController {
 
     @PostMapping("/{id}/{reactionType}")
     public ResponseEntity<PostReactionCountResponseDto> reactToPost(@PathVariable Long id, @PathVariable int reactionType) throws Exception {
-        PostReactionCountResponseDto res= this.postService.reactToPost(id,reactionType);
+        PostReactionCountResponseDto res = postService.reactToPost(id,reactionType);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
+
+    @GetMapping("/{postId}/bestComment")
+    public ResponseEntity<CommentResponseDto> getBestComment(@PathVariable Long postId){
+        CommentResponseDto res = commentService.getBestComment(postId);
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 

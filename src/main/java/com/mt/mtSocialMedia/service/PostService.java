@@ -1,5 +1,6 @@
 package com.mt.mtSocialMedia.service;
 
+import com.mt.mtSocialMedia.dto.Comment.CommentResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostDto;
 import com.mt.mtSocialMedia.dto.Post.PostReactionCountResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
@@ -17,4 +18,6 @@ public interface PostService {
     Page<PostResponseDto> getFeedPostsPaginate(int pageSize, int pageNumber);
 
     Page<PostResponseDto> getFriendsPostsPaginate(int pageSize, int pageNumber);
+
+
 }

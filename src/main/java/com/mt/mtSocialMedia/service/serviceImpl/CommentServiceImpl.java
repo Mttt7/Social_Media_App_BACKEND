@@ -128,6 +128,14 @@ public class CommentServiceImpl implements CommentService {
                 .build();
     }
 
+    @Override
+    public CommentResponseDto getBestComment(Long postId) {
+        Comment comment = commentRepository.findTopByPost_IdOrderByReactionCountDesc(postId);
+        if(comment==null) return CommentResponseDto.builder().build();
+
+        return CommentMapper.mapToCommentResponseDto(comment);
+
+    }
 
 
 }

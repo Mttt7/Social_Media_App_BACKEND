@@ -14,4 +14,5 @@ public interface CommentService {
     public CommentReactionCountResponseDto getReactionsCount(Long commentId);
 
 
+    CommentResponseDto getBestComment(Long postId);
 }

@@ -1,5 +1,6 @@
 package com.mt.mtSocialMedia.repository;
 
+import com.mt.mtSocialMedia.model.Comment;
 import com.mt.mtSocialMedia.model.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,4 +15,5 @@ public interface PostRepository extends JpaRepository<Post,Long> {
 
     @Query("SELECT p FROM Post p WHERE p.userEntity.id IN :friendIds")
     Page<Post> findAllByUserEntity_IdIn(List<Long> friendIds, Pageable pageable);
+
 }
