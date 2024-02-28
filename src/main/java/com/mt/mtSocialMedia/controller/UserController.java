@@ -55,6 +55,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getFriendList(userId));
     }
 
+    @GetMapping("/{userId}/searchFriends/{query}")
+    public ResponseEntity<List<UserResponseDto>> searchFriendOfUser(@PathVariable Long userId,
+                                                                    @PathVariable String query){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.searchFriendsOfUser(userId,query));
+    }
+
     @GetMapping("/friendRequests/sent")
     public ResponseEntity<List<UserResponseDto>> getSentFriendRequests(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getSentFriendRequest());

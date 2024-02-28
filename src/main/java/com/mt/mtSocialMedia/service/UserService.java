@@ -29,4 +29,6 @@ public interface UserService {
     HashMap<String, String> getStatusWithGivenUser(Long userId);
 
     UserResponseDto editUserProfile(UserRequestDto userRequestDto);
+
+    List<UserResponseDto> searchFriendsOfUser(Long userId, String query);
 }

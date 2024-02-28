@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -121,6 +122,17 @@ public class UserServiceImpl implements UserService {
         return UserMapper.mapToUserResponseDto(user);
     }
 
+    @Override
+    public List<UserResponseDto> searchFriendsOfUser(Long userId, String query) {
+
+        List<UserResponseDto> friends = this.getFriendList(userId);
+        if(query.isEmpty()) return friends;
+
+        return friends.stream()
+                .filter(friend -> friend.getFirstName().toLowerCase().contains(query.toLowerCase())
+                || friend.getLastName().toLowerCase().contains(query.toLowerCase())).collect(Collectors.toList());
+    }
+
 
     @Override
     public List<UserResponseDto> getFriendList(Long userId) {
@@ -130,7 +142,9 @@ public class UserServiceImpl implements UserService {
         for (Friendship f :
                 friendshipRepository.findAllByUser(user)) {
             if(friendshipRepository.existsByUserAndFriend(f.getFriend(),user)){
-                friends.add(UserMapper.mapToUserResponseDto(f.getFriend()));
+                if(friendshipRepository.existsByUserAndFriend(user,f.getFriend())){
+                    friends.add(UserMapper.mapToUserResponseDto(f.getFriend()));
+                }
             }
         }
 
