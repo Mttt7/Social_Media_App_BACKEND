@@ -137,6 +137,23 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
+    @Override
+    public String deleteComment(Long id) {
+        Comment comment = commentRepository.findById(id).orElse(null);
+        if(comment == null) return "Comment does not exist";
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByUsername(username).orElse(null);
+
+        if(user==comment.getAuthor()){
+            commentRepository.delete(comment);
+            return "success";
+        }else{
+            return "Unauthorized!";
+        }
+
+    }
+
 
 }
 

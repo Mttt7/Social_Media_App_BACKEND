@@ -15,4 +15,6 @@ public interface CommentService {
 
 
     CommentResponseDto getBestComment(Long postId);
+
+    String deleteComment(Long id);
 }
