@@ -8,14 +8,8 @@ import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
 import com.mt.mtSocialMedia.dto.User.UserResponseDto;
 import com.mt.mtSocialMedia.enums.Reaction;
 import com.mt.mtSocialMedia.mapper.PostMapper;
-import com.mt.mtSocialMedia.model.Post;
-import com.mt.mtSocialMedia.model.PostReaction;
-import com.mt.mtSocialMedia.model.Topic;
-import com.mt.mtSocialMedia.model.UserEntity;
-import com.mt.mtSocialMedia.repository.PostReactionRepository;
-import com.mt.mtSocialMedia.repository.PostRepository;
-import com.mt.mtSocialMedia.repository.TopicRepository;
-import com.mt.mtSocialMedia.repository.UserRepository;
+import com.mt.mtSocialMedia.model.*;
+import com.mt.mtSocialMedia.repository.*;
 import com.mt.mtSocialMedia.service.PostService;
 import com.mt.mtSocialMedia.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +34,7 @@ public class PostServiceImpl implements PostService {
     private final TopicRepository topicRepository;
     private final PostRepository postRepository;
     private final PostReactionRepository postReactionRepository;
+    private final CommentRepository commentRepository;
     private final UserService userService;
 
     @Override
@@ -87,6 +82,10 @@ public class PostServiceImpl implements PostService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         if(Objects.equals(post.getUserEntity().getUsername(), username)){
+
+            List<Comment> comments = commentRepository.findAllByPost_Id(id);
+            commentRepository.deleteAll(comments);
+
             postRepository.delete(post);
             return "Post removed id-"+id;
         }else{
