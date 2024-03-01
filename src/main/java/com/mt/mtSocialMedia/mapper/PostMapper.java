@@ -27,6 +27,7 @@ public class PostMapper {
                 .createdAt(post.getCreatedAt())
                 .lastUpdated(post.getLastUpdated())
                 .reactionCount(post.getReactionCount()==null ? 0 : post.getReactionCount())
+                .commentCount(post.getCommentCount())
                 .reactions(reactions)
                 .imageUrl(post.getImageUrl())
                 .topic(post.getTopic())

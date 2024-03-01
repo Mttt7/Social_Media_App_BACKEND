@@ -63,7 +63,17 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = new Comment();
         comment.setAuthor(user);
         comment.setContent(commentContent);
-        comment.setPost(postRepository.findById(postId).orElse(null));
+        Post post = postRepository.findById(postId).orElse(null);
+
+        if (post.getCommentCount() == null) {
+            post.setCommentCount(1L);
+        } else {
+            post.setCommentCount(post.getCommentCount() + 1);
+        }
+
+        comment.setPost(post);
+
+        postRepository.save(post);
         commentRepository.save(comment);
         return "Comment Added";
     }
@@ -146,7 +156,10 @@ public class CommentServiceImpl implements CommentService {
         UserEntity user = userRepository.findByUsername(username).orElse(null);
 
         if(user==comment.getAuthor()){
+            Post post = comment.getPost();
             commentRepository.delete(comment);
+            post.setCommentCount(post.getCommentCount()-1);
+            postRepository.save(post);
             return "success";
         }else{
             return "Unauthorized!";

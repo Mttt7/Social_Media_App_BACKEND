@@ -21,6 +21,7 @@ public class PostResponseDto {
     private Timestamp createdAt;
     private Timestamp lastUpdated;
     private Long reactionCount;
+    private Long commentCount;
     private List<PostReactionResponseDto> reactions;
     private String imageUrl;
     private Topic topic;

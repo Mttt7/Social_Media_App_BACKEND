@@ -35,6 +35,9 @@ public class Post {
     @Column(name = "reaction_count")
     private Long reactionCount;
 
+    @Column(name = "comment_count")
+    private Long commentCount;
+
     @Column(name = "image_url")
     private String imageUrl;
 
