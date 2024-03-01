@@ -42,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
         }else if(Objects.equals(sortBy, "reactionAsc")){
             sort = Sort.by("reactionCount").ascending();
         } else if (Objects.equals(sortBy, "reactionDesc")) {
-            sort = Sort.by("reactionCountAsc").descending();
+            sort = Sort.by("reactionCount").descending();
         }
 
         Page<Comment> commentPage = commentRepository.findAllByPost_Id(postId,PageRequest.of(pageNumber,pageSize,sort));
@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
                commentPage
                        .stream()
                        .map(CommentMapper::mapToCommentResponseDto)
-                       .collect(Collectors.toList()),PageRequest.of(pageNumber,pageSize),
+                       .collect(Collectors.toList()),PageRequest.of(pageNumber,pageSize,sort),
                commentPage.getTotalElements()
        );
     }

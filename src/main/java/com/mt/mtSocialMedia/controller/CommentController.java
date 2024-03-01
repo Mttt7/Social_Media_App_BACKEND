@@ -26,7 +26,7 @@ public class CommentController {
     public ResponseEntity<Page<CommentResponseDto>> getCommentsByPostIdPaginate(@PathVariable Long postId,
                                                                                 @RequestParam int pageSize,
                                                                                 @RequestParam int pageNumber,
-                                                                                String sortBy){
+                                                                                @RequestParam String sortBy){
        return ResponseEntity.status(HttpStatus.OK).body(commentService.getCommentsByPostId(postId,pageSize,pageNumber,sortBy));
     }
 
