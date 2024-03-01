@@ -9,6 +9,7 @@ import com.mt.mtSocialMedia.model.Role;
 import com.mt.mtSocialMedia.model.UserEntity;
 import com.mt.mtSocialMedia.repository.RoleRepository;
 import com.mt.mtSocialMedia.repository.UserRepository;
+import com.mt.mtSocialMedia.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -31,6 +33,7 @@ import java.util.Objects;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final UserService userService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -75,5 +78,19 @@ public class AuthController {
 
         userRepository.save(user);
         return new ResponseEntity<>(StringResponseMapper.mapToMap("success"), HttpStatus.OK);
+    }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<Map<String,Boolean>> checkUsernameAvailability(@PathVariable String username){
+        if(username.isEmpty()) {
+            Map<String, Boolean> response = new HashMap<>();
+            response.put("empty", true);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        Boolean res =  userService.checkUsernameAvailability(username);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("available", res);
+
+       return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

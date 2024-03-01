@@ -31,4 +31,6 @@ public interface UserService {
     UserResponseDto editUserProfile(UserRequestDto userRequestDto);
 
     List<UserResponseDto> searchFriendsOfUser(Long userId, String query);
+
+    Boolean checkUsernameAvailability(String username);
 }

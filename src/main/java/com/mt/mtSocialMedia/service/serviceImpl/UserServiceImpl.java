@@ -133,6 +133,11 @@ public class UserServiceImpl implements UserService {
                 || friend.getLastName().toLowerCase().contains(query.toLowerCase())).collect(Collectors.toList());
     }
 
+    @Override
+    public Boolean checkUsernameAvailability(String username) {
+       return !userRepository.existsByUsername(username);
+    }
+
 
     @Override
     public List<UserResponseDto> getFriendList(Long userId) {
