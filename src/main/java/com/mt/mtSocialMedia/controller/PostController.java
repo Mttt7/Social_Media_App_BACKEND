@@ -94,6 +94,14 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
+    @GetMapping("/{id}/userReaction")
+    public ResponseEntity<Map<String, Integer>> checkUserReaction(@PathVariable Long id) {
+        Integer res = postService.checkUserReaction(id);
+        Map<String, Integer> responseBody = new HashMap<>();
+        responseBody.put("reaction", res);
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+    }
+
     @GetMapping("/{postId}/bestComment")
     public ResponseEntity<CommentResponseDto> getBestComment(@PathVariable Long postId){
         CommentResponseDto res = commentService.getBestComment(postId);

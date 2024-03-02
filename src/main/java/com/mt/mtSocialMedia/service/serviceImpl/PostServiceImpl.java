@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -212,6 +213,21 @@ public class PostServiceImpl implements PostService {
                 postsPage.getPageable(),
                 postsPage.getTotalElements()
         );
+    }
+
+    @Override
+    public Integer checkUserReaction(Long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByUsername(username).orElse(null);
+
+        Post post = postRepository.findById(id).orElse(null);
+
+        if(postReactionRepository.existsByAuthorAndPost(user,post)){
+            return postReactionRepository.findByAuthorAndPost(user,post).getReactionType().getValue();
+        }else{
+            return -1;
+        }
+
     }
 
 
