@@ -5,15 +5,13 @@ import com.mt.mtSocialMedia.dto.Comment.CommentResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostReactionCountResponseDto;
 import com.mt.mtSocialMedia.enums.Reaction;
 import com.mt.mtSocialMedia.mapper.CommentMapper;
-import com.mt.mtSocialMedia.model.Comment;
-import com.mt.mtSocialMedia.model.CommentReaction;
-import com.mt.mtSocialMedia.model.Post;
-import com.mt.mtSocialMedia.model.UserEntity;
+import com.mt.mtSocialMedia.model.*;
 import com.mt.mtSocialMedia.repository.CommentReactionRepository;
 import com.mt.mtSocialMedia.repository.CommentRepository;
 import com.mt.mtSocialMedia.repository.PostRepository;
 import com.mt.mtSocialMedia.repository.UserRepository;
 import com.mt.mtSocialMedia.service.CommentService;
+import com.mt.mtSocialMedia.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -33,6 +32,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentReactionRepository commentReactionRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final NotificationService notificationService;
 
     @Override
     public Page<CommentResponseDto> getCommentsByPostId(Long postId,int pageSize, int pageNumber, String sortBy) {
@@ -64,6 +64,16 @@ public class CommentServiceImpl implements CommentService {
         comment.setAuthor(user);
         comment.setContent(commentContent);
         Post post = postRepository.findById(postId).orElse(null);
+
+        List<Comment> comments = commentRepository.findAllByPost_Id(postId);
+        List<UserEntity> userWhoAlsoCommented = comments.stream().map(Comment::getAuthor).collect(Collectors.toList());
+        userWhoAlsoCommented = userWhoAlsoCommented.stream().distinct().collect(Collectors.toList());
+        for (UserEntity receiver:
+             userWhoAlsoCommented) {
+             notificationService.createNotification(user,receiver,"alsoCommented",postId);
+        }
+
+        notificationService.createNotification(user,post.getAuthor(),"commentedPost",postId);
 
         if (post.getCommentCount() == null) {
             post.setCommentCount(1L);
@@ -118,6 +128,8 @@ public class CommentServiceImpl implements CommentService {
                     .build();
             if(comment.getReactionCount()==null) comment.setReactionCount(0L);
             comment.setReactionCount(comment.getReactionCount()+1);
+
+            notificationService.createNotification(user,comment.getAuthor(),"reactedToComment",comment.getPost().getId());
 
             commentReactionRepository.save(commentReaction);
             commentRepository.save(comment);

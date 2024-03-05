@@ -4,6 +4,7 @@ import com.mt.mtSocialMedia.dto.User.UserRequestDto;
 import com.mt.mtSocialMedia.dto.User.UserResponseDto;
 import com.mt.mtSocialMedia.model.UserEntity;
 import com.mt.mtSocialMedia.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +26,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserId());
     }
 
+
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponseDto> getUserProfile(@PathVariable Long userId){
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getUserProfileById(userId));
+        UserResponseDto res = userService.getUserProfileById(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
+    @Transactional
     @PatchMapping("")
     public ResponseEntity<UserResponseDto> editUserProfile(@RequestBody UserRequestDto userRequestDto){
         return ResponseEntity.status(HttpStatus.OK).body(userService.editUserProfile(userRequestDto));

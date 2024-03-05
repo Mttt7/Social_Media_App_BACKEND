@@ -31,7 +31,7 @@ public class PostMapper {
                 .reactions(reactions)
                 .imageUrl(post.getImageUrl())
                 .topic(post.getTopic())
-                .userId(post.getUserEntity().getId())
+                .userId(post.getAuthor().getId())
                 .build();
     }
 }

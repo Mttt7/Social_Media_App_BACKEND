@@ -47,7 +47,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserEntity userEntity;
+    private UserEntity author;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "post")
     List<PostReaction> reactions;

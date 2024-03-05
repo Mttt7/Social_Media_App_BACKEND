@@ -8,6 +8,7 @@ import com.mt.mtSocialMedia.model.Friendship;
 import com.mt.mtSocialMedia.model.UserEntity;
 import com.mt.mtSocialMedia.repository.FriendshipRepository;
 import com.mt.mtSocialMedia.repository.UserRepository;
+import com.mt.mtSocialMedia.service.NotificationService;
 import com.mt.mtSocialMedia.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +27,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final FriendshipRepository friendshipRepository;
+    private final NotificationService notificationService;
     @Override
     public Long getUserId() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -54,6 +56,13 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         friendshipRepository.save(friendship);
+
+        if(friendshipRepository.existsByUserAndFriend(friend,user)){
+            notificationService.createNotification(user,friend,"acceptedFriendRequest",user.getId());
+        }else{
+            notificationService.createNotification(user,friend,"sentFriendRequest",user.getId());
+        }
+
 
         return StringResponseMapper.mapToMap("Friend Request Sent");
     }
@@ -116,8 +125,6 @@ public class UserServiceImpl implements UserService {
         if(userRequestDto.getPhotoUrl() != null) user.setPhotoUrl(userRequestDto.getPhotoUrl());
         if(userRequestDto.getBackgroundUrl() != null) user.setBackgroundUrl(userRequestDto.getBackgroundUrl());
         if(userRequestDto.getAbout() != null) user.setAbout(userRequestDto.getAbout());
-
-        userRepository.save(user);
 
         return UserMapper.mapToUserResponseDto(user);
     }

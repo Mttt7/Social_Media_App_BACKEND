@@ -11,9 +11,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post,Long> {
-    Page<Post> findAllByUserEntity_Id(Long id, PageRequest pg);
+    Page<Post> findAllByAuthor_Id(Long id, PageRequest pg);
 
-    @Query("SELECT p FROM Post p WHERE p.userEntity.id IN :friendIds")
+    @Query("SELECT p FROM Post p WHERE p.author.id IN :friendIds")
     Page<Post> findAllByUserEntity_IdIn(List<Long> friendIds, Pageable pageable);
 
 }

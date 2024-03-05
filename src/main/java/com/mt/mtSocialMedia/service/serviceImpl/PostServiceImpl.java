@@ -10,6 +10,7 @@ import com.mt.mtSocialMedia.enums.Reaction;
 import com.mt.mtSocialMedia.mapper.PostMapper;
 import com.mt.mtSocialMedia.model.*;
 import com.mt.mtSocialMedia.repository.*;
+import com.mt.mtSocialMedia.service.NotificationService;
 import com.mt.mtSocialMedia.service.PostService;
 import com.mt.mtSocialMedia.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class PostServiceImpl implements PostService {
     private final PostReactionRepository postReactionRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     @Override
     public String createPost(PostDto postDto) {
@@ -51,7 +53,7 @@ public class PostServiceImpl implements PostService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByUsername(username).orElse(null);
 
-        post.setUserEntity(user);
+        post.setAuthor(user);
         postRepository.save(post);
 
         return "Post created!";
@@ -62,7 +64,7 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(id).orElse(null);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        if(Objects.equals(post.getUserEntity().getUsername(), username)){
+        if(Objects.equals(post.getAuthor().getUsername(), username)){
            if(postDto.getTitle() != null) post.setTitle(postDto.getTitle());
            if(postDto.getContent() != null) post.setContent(postDto.getContent());
            if(postDto.getImageUrl() != null) post.setImageUrl(postDto.getImageUrl());
@@ -82,7 +84,7 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(id).orElse(null);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        if(Objects.equals(post.getUserEntity().getUsername(), username)){
+        if(Objects.equals(post.getAuthor().getUsername(), username)){
 
             List<Comment> comments = commentRepository.findAllByPost_Id(id);
             commentRepository.deleteAll(comments);
@@ -135,6 +137,8 @@ public class PostServiceImpl implements PostService {
             post.setReactionCount(post.getReactionCount()+1);
             postReactionRepository.save(postReaction);
             postRepository.save(post);
+
+            notificationService.createNotification(user,post.getAuthor(),"reactedToPost",post.getId());
         }
 
         return this.getReactionsCount(id);
@@ -163,7 +167,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<PostResponseDto> getPostsByUserIdPaginate(Long id, int pageSize, int pageNumber) {
-        Page<Post> postsPage = postRepository.findAllByUserEntity_Id(id,PageRequest.of(pageNumber,
+        Page<Post> postsPage = postRepository.findAllByAuthor_Id(id,PageRequest.of(pageNumber,
                 pageSize,
                 Sort.by("createdAt").descending()));
 
