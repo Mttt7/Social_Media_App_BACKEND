@@ -5,6 +5,7 @@ import com.mt.mtSocialMedia.dto.Comment.CommentResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostDto;
 import com.mt.mtSocialMedia.dto.Post.PostReactionCountResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
+import com.mt.mtSocialMedia.dto.PostWithPhotoDto;
 import com.mt.mtSocialMedia.enums.Reaction;
 import com.mt.mtSocialMedia.mapper.StringResponseMapper;
 import com.mt.mtSocialMedia.service.CommentService;
@@ -71,9 +72,16 @@ public class PostController {
     }
 
     @GetMapping("/feed")
-    public  ResponseEntity<Page<PostResponseDto>> getFeedPostsPaginate(@RequestParam int pageSize,
+    public ResponseEntity<Page<PostResponseDto>> getFeedPostsPaginate(@RequestParam int pageSize,
                                                                                        @RequestParam int pageNumber){
         Page<PostResponseDto> res = postService.getFeedPostsPaginate(pageSize,pageNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
+    }
+
+    @GetMapping("photos/{userId}")
+    public ResponseEntity<Page<PostWithPhotoDto>> getPostsWithPhotosPaginate(@PathVariable Long userId,@RequestParam int pageSize,
+                                                                                @RequestParam int pageNumber){
+        Page<PostWithPhotoDto> res = postService.getPostsWithPhotosPaginate(userId,pageSize,pageNumber);
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
     @GetMapping("/friends")

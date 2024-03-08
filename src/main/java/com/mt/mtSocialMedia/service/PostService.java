@@ -1,12 +1,10 @@
 package com.mt.mtSocialMedia.service;
 
-import com.mt.mtSocialMedia.dto.Comment.CommentResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostDto;
 import com.mt.mtSocialMedia.dto.Post.PostReactionCountResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
+import com.mt.mtSocialMedia.dto.PostWithPhotoDto;
 import org.springframework.data.domain.Page;
-
-import java.util.Map;
 
 public interface PostService {
     String createPost(PostDto postDto);
@@ -23,4 +21,6 @@ public interface PostService {
 
 
     Integer checkUserReaction(Long id);
+
+    Page<PostWithPhotoDto> getPostsWithPhotosPaginate(Long userId, int pageSize, int pageNumber);
 }

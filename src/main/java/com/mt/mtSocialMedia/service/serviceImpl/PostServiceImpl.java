@@ -1,10 +1,9 @@
 package com.mt.mtSocialMedia.service.serviceImpl;
 
-import com.mt.mtSocialMedia.config.security.JWTGenerator;
-import com.mt.mtSocialMedia.dto.Comment.CommentResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostDto;
 import com.mt.mtSocialMedia.dto.Post.PostReactionCountResponseDto;
 import com.mt.mtSocialMedia.dto.Post.PostResponseDto;
+import com.mt.mtSocialMedia.dto.PostWithPhotoDto;
 import com.mt.mtSocialMedia.dto.User.UserResponseDto;
 import com.mt.mtSocialMedia.enums.Reaction;
 import com.mt.mtSocialMedia.mapper.PostMapper;
@@ -18,13 +17,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -45,7 +41,7 @@ public class PostServiceImpl implements PostService {
         Post post = new Post();
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
-        if(postDto.getImageUrl() != null) post.setImageUrl(postDto.getImageUrl());
+        if(postDto.getImageUrl() != null && !postDto.getImageUrl().equals("")) post.setImageUrl(postDto.getImageUrl());
         if(postDto.getTopicId() != null){
             Topic topic = topicRepository.findById(postDto.getTopicId()).orElse(null);
             post.setTopic(topic);
@@ -231,6 +227,20 @@ public class PostServiceImpl implements PostService {
         }else{
             return -1;
         }
+
+    }
+
+    @Override
+    public Page<PostWithPhotoDto> getPostsWithPhotosPaginate(Long userId, int pageSize, int pageNumber) {
+        UserEntity user = userRepository.findById(userId).orElseThrow();
+
+        Page<Post> postsPage = postRepository.findAllByAuthorAndImageUrlIsNotNull(user,PageRequest.of(pageNumber,
+                pageSize,
+                Sort.by("createdAt").descending()));
+        return new PageImpl<>(postsPage.getContent().stream().map(PostMapper::mapToPostWithPhotoDto).collect(Collectors.toList()),
+                postsPage.getPageable(),
+                postsPage.getTotalElements()
+        );
 
     }
 

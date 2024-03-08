@@ -2,6 +2,7 @@ package com.mt.mtSocialMedia.repository;
 
 import com.mt.mtSocialMedia.model.Comment;
 import com.mt.mtSocialMedia.model.Post;
+import com.mt.mtSocialMedia.model.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,4 +17,5 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     @Query("SELECT p FROM Post p WHERE p.author.id IN :friendIds")
     Page<Post> findAllByUserEntity_IdIn(List<Long> friendIds, Pageable pageable);
 
+    Page<Post> findAllByAuthorAndImageUrlIsNotNull(UserEntity author,PageRequest pg);
 }
