@@ -11,6 +11,7 @@ It allows users to create profiles, connect with friends, comment on posts, and 
 <a href="https://firebase.google.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg" alt="firebase" width="40" height="40"/> </a>
 
 For authentication, I've implemented JSON Web Tokens (JWT) for secure user authentication and authorization. For storing images, I've utilized Firebase Storage, providing a reliable and scalable solution for managing and serving images within the application.
+Components Library: https://primeng.org
 ### Database schema
 ![image](https://github.com/Mttt7/Social_Media_App_BACKEND/assets/102900827/4328b7f5-2f00-4c87-8fe0-2775f5b75224)
 
