@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -18,4 +19,9 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     Page<Post> findAllByUserEntity_IdIn(List<Long> friendIds, Pageable pageable);
 
     Page<Post> findAllByAuthorAndImageUrlIsNotNull(UserEntity author,PageRequest pg);
+
+    @Query("SELECT p FROM Post p WHERE p.content LIKE %:query% OR p.title LIKE %:query%")
+    Page<Post> findByUsernameOrFirstNameOrLastNameContaining(@Param("query") String query, Pageable pageable);
+
+
 }
