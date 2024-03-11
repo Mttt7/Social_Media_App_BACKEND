@@ -58,6 +58,9 @@ For authentication, I've implemented JSON Web Tokens (JWT) for secure user authe
 ### The top comment (with the most reactions) is shown as featured in post view.
 ![image](https://github.com/Mttt7/Social_Media_App_BACKEND/assets/102900827/1d0118e3-8784-4873-92b2-95e6a7bfccae)
 
+### Pagination (Endless scrolling)
+![image](https://github.com/Mttt7/Social_Media_App_BACKEND/assets/102900827/7aacc2a0-3dca-47ea-86dc-4d226f8e3c7c)
+
 ### Notifications
 ![image](https://github.com/Mttt7/Social_Media_App_BACKEND/assets/102900827/52eff829-b486-4b72-968c-0d2af5b72ae9)
 
