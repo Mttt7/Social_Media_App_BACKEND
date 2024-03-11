@@ -15,7 +15,7 @@ For authentication, I've implemented JSON Web Tokens (JWT) for secure user authe
 
 ## Screenshots
 
-### Registraion and Logging in
+### Registration and Logging in
 ![image](https://github.com/Mttt7/Social_Media_App_BACKEND/assets/102900827/2bf083ce-0173-42e2-bbec-b0768e985523)
 ![image](https://github.com/Mttt7/Social_Media_App_BACKEND/assets/102900827/b3efa4f4-782b-4d32-ad67-dcb8bd7048b7)
 
