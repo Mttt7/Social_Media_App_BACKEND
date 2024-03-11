@@ -1,4 +1,5 @@
 # Social Media App Fullstack
+### Frontend: https://github.com/Mttt7/Social_Media_App_FRONTEND
 This project is a full-stack social media application inspired by platforms like Facebook.
 It allows users to create profiles, connect with friends, comment on posts, and engage in various social interactions.
 
