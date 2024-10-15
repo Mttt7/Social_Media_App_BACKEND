@@ -72,8 +72,7 @@ Components Library: https://primeng.org
 
 
 
-### DOWNLOAD using Docker
-in progress . . .
+
 
 
 
